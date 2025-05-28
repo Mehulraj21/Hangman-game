@@ -1,0 +1,93 @@
+ 
+  .guesses {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  
+  input[type="text"] {
+    padding: 5px 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    margin-right: 10px;
+  }
+  
+  button {
+    padding: 5px 10px;
+    font-size: 16px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #555;
+  }
+
+function updateGuessesDisplay() {
+  guessesDisplay.textContent = `${guessedLetters.join(', ')}`;
+}
+
+function setWinBackgroundColor() {
+  document.body.style.backgroundColor = 'green';
+}
+
+function setLossBackgroundColor() {
+  document.body.style.backgroundColor = 'red';
+}
+
+
+function checkWin() {
+  if (selectedWord.split('').every(letter => guessedLetters.includes(letter))) {
+    wordDisplay.textContent = 'Congratulations! You won!';
+    guessInput.disabled = true;
+    guessButton.disabled = true;
+    setWinBackgroundColor(); // Set background color to green
+  }
+}
+function checkLoss() {
+  if (remainingAttempts <= 0) {
+    wordDisplay.textContent = 'Game over! You lost.';
+    guessInput.disabled = true;
+    guessButton.disabled = true;
+    setLossBackgroundColor();
+  }
+}
+
+function guessLetter() {
+  const letter = guessInput.value.toLowerCase();
+
+  if (letter && !guessedLetters.includes(letter)) {
+    guessedLetters.push(letter);
+    if (!selectedWord.includes(letter)) {
+      remainingAttempts--;
+      updateHangmanDisplay();
+    }
+  }
+
+
+  displayWord();
+  updateGuessesDisplay();
+  checkWin();
+  checkLoss();
+
+  guessInput.value = '';
+
+  if (remainingAttempts > 0 && !wordDisplay.textContent.includes('Congratulations')) {
+    guessInput.focus();
+  }
+}
+
+displayWord();
+updateGuessesDisplay();
+updateHangmanDisplay();
+
+guessButton.addEventListener('click', guessLetter);
+guessInput.addEventListener('keydown', event => {
+  if (event.key === 'Enter') {
+    guessLetter();
+  }
+});
+
